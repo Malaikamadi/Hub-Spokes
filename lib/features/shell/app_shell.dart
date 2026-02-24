@@ -273,9 +273,9 @@ class AppShell extends StatelessWidget {
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: () {
-                  auth.logout();
-                  context.go('/login');
+                onTap: () async {
+                  await auth.logout();
+                  if (context.mounted) context.go('/login');
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 8),
