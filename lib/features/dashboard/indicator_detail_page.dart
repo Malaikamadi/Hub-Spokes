@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/data/mock_data.dart';
 import '../../core/models/dashboard_models.dart';
+import '../../core/models/database_models.dart' as db;
+import '../../core/services/data_service.dart';
 
 class IndicatorDetailPage extends StatefulWidget {
   final int indicatorNumber;
@@ -19,15 +21,18 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
   late KpiIndicator _indicator;
   late KpiCategory _category;
   String _selectedQuarter = 'All';
-  bool _isDistribution = false; // false = Aggregate, true = Distribution
+  bool _isDistribution = false;
+  bool _isLive = false;
 
   @override
   void initState() {
     super.initState();
     _findIndicator();
+    _tryFetchLiveData();
   }
 
   void _findIndicator() {
+    // Start with mock data as default
     for (final cat in MockData.kpiCategories) {
       for (final ind in cat.indicators) {
         if (ind.number == widget.indicatorNumber) {
@@ -36,6 +41,41 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
           return;
         }
       }
+    }
+  }
+
+  Future<void> _tryFetchLiveData() async {
+    try {
+      final ind = await DataService.instance
+          .getIndicatorByNumber(widget.indicatorNumber);
+      if (ind == null) return;
+
+      final summaries = await DataService.instance
+          .getIndicatorSummaries(indicatorId: ind.id, year: 2025);
+
+      final latest = summaries.isNotEmpty ? summaries.last : null;
+
+      if (mounted) {
+        setState(() {
+          _indicator = KpiIndicator(
+            number: ind.number,
+            name: ind.name,
+            value: latest != null
+                ? latest.combinedTotal.toInt().toString()
+                : _indicator.value,
+            changeText: latest?.changeText ?? _indicator.changeText,
+            isPositive: latest?.isPositive ?? _indicator.isPositive,
+            sdgTag: ind.sdgTag,
+            source: ind.dataSource ?? _indicator.source,
+            targetDescription:
+                ind.targetDescription ?? _indicator.targetDescription,
+            status: latest?.status ?? _indicator.status,
+          );
+          _isLive = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Detail page: using mock data ($e)');
     }
   }
 
