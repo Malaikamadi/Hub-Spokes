@@ -71,11 +71,13 @@ class AppShell extends StatelessWidget {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.hub_outlined,
-                      color: Colors.white,
-                      size: 22,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/mohs_logo.png',
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

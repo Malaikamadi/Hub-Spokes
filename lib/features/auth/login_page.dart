@@ -167,11 +167,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                             ],
                           ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.hub_outlined,
-                              color: Colors.white,
-                              size: 44,
+                          child: Center(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.asset(
+                                'assets/images/mohs_logo.png',
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -379,11 +383,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                               borderRadius: BorderRadius.circular(18),
                             ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.hub_outlined,
-                                color: Colors.white,
-                                size: 32,
+                            child: Center(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.asset(
+                                  'assets/images/mohs_logo.png',
+                                  width: 44,
+                                  height: 44,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),

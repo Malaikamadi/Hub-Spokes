@@ -50,24 +50,34 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.scaffoldBg,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ─── Back + Breadcrumb ───────────────────────────
-            _buildBreadcrumb(),
-            const SizedBox(height: 24),
-            // ─── Indicator Hero Card ─────────────────────────
-            _buildHeroSection(),
-            const SizedBox(height: 24),
-            // ─── Chart + Sidebar ─────────────────────────────
-            _buildAnalyticsSection(),
-          ],
+    return Stack(
+      children: [
+        Container(
+          color: AppColors.scaffoldBg,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ─── Back + Breadcrumb ───────────────────────────
+                _buildBreadcrumb(),
+                const SizedBox(height: 24),
+                // ─── Indicator Hero Card ─────────────────────────
+                _buildHeroSection(),
+                const SizedBox(height: 24),
+                // ─── Chart + Sidebar ─────────────────────────────
+                _buildAnalyticsSection(),
+              ],
+            ),
+          ),
         ),
-      ),
+        // Floating AI Insight Button
+        Positioned(
+          bottom: 28,
+          right: 28,
+          child: _buildFloatingAiButton(),
+        ),
+      ],
     );
   }
 
@@ -328,8 +338,6 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
           flex: 35,
           child: Column(
             children: [
-              _buildAiInsightCard(),
-              const SizedBox(height: 20),
               _buildTargetProgressCard(),
             ],
           ),
@@ -573,82 +581,8 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
     );
   }
 
-  Widget _buildAiInsightCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.sidebarBg,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.15),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.primary, AppColors.primaryLight],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.auto_awesome,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'AI Data Insight',
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Generate an AI-powered analysis of ${_indicator.name} trends.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              color: AppColors.sidebarText,
-              fontSize: 12,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                'Analyze Trend',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  Widget _buildFloatingAiButton() {
+    return _FloatingAiButton(indicatorName: _indicator.name);
   }
 
   Widget _buildTargetProgressCard() {
@@ -729,6 +663,119 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
             );
           }),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Floating AI Button Widget ──────────────────────────────────────
+class _FloatingAiButton extends StatefulWidget {
+  final String indicatorName;
+
+  const _FloatingAiButton({required this.indicatorName});
+
+  @override
+  State<_FloatingAiButton> createState() => _FloatingAiButtonState();
+}
+
+class _FloatingAiButtonState extends State<_FloatingAiButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: () {
+          // TODO: AI insight action
+        },
+        child: AnimatedBuilder(
+          animation: _pulseAnimation,
+          builder: (context, child) {
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              padding: EdgeInsets.symmetric(
+                horizontal: _isHovered ? 20 : 0,
+                vertical: 0,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primary,
+                    AppColors.primaryLight,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(_isHovered ? 28 : 30),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(
+                        alpha: 0.2 + (_pulseAnimation.value * 0.15)),
+                    blurRadius: 16 + (_pulseAnimation.value * 8),
+                    spreadRadius: _pulseAnimation.value * 4,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOut,
+                child: SizedBox(
+                  height: 56,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 56,
+                        height: 56,
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.smart_toy_rounded,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                      ),
+                      if (_isHovered) ...[
+                        Text(
+                          'AI Insight',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

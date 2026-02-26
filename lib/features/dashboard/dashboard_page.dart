@@ -19,6 +19,7 @@ class DashboardPage extends StatelessWidget {
           children: [
             // Page header
             _buildPageHeader(),
+            
             const SizedBox(height: 24),
             // Categorized KPI Indicator Sections
             ...MockData.kpiCategories.map((category) => Padding(
