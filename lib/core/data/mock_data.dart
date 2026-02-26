@@ -308,6 +308,110 @@ class MockData {
     ChartDataPoint(month: 'Dec', hubValue: 8, spokeValue: 7),
   ];
 
+  // Quarterly Data
+  static const List<QuarterlyData> quarterlyData = [
+    QuarterlyData(
+      quarter: 'Q1',
+      hubTotal: 10,
+      spokeTotal: 4.5,
+      monthlyData: [
+        ChartDataPoint(month: 'Jan', hubValue: 2, spokeValue: 1),
+        ChartDataPoint(month: 'Feb', hubValue: 3, spokeValue: 1.5),
+        ChartDataPoint(month: 'Mar', hubValue: 5, spokeValue: 2),
+      ],
+    ),
+    QuarterlyData(
+      quarter: 'Q2',
+      hubTotal: 29,
+      spokeTotal: 12,
+      monthlyData: [
+        ChartDataPoint(month: 'Apr', hubValue: 7, spokeValue: 3),
+        ChartDataPoint(month: 'May', hubValue: 10, spokeValue: 4),
+        ChartDataPoint(month: 'Jun', hubValue: 12, spokeValue: 5),
+      ],
+    ),
+    QuarterlyData(
+      quarter: 'Q3',
+      hubTotal: 43,
+      spokeTotal: 21,
+      monthlyData: [
+        ChartDataPoint(month: 'Jul', hubValue: 18, spokeValue: 6),
+        ChartDataPoint(month: 'Aug', hubValue: 14, spokeValue: 7),
+        ChartDataPoint(month: 'Sep', hubValue: 11, spokeValue: 8),
+      ],
+    ),
+    QuarterlyData(
+      quarter: 'Q4',
+      hubTotal: 27,
+      spokeTotal: 20,
+      monthlyData: [
+        ChartDataPoint(month: 'Oct', hubValue: 10, spokeValue: 7),
+        ChartDataPoint(month: 'Nov', hubValue: 9, spokeValue: 6),
+        ChartDataPoint(month: 'Dec', hubValue: 8, spokeValue: 7),
+      ],
+    ),
+  ];
+
+  // Facility distribution data per quarter
+  static const Map<String, List<FacilityData>> facilityDistribution = {
+    'Q1': [
+      FacilityData(facilityName: 'Kenema Hub', value: 3, isHub: true),
+      FacilityData(facilityName: 'Bo Hub', value: 2, isHub: true),
+      FacilityData(facilityName: 'Makeni Hub', value: 2, isHub: true),
+      FacilityData(facilityName: 'Freetown Hub', value: 1.5, isHub: true),
+      FacilityData(facilityName: 'Kono Hub', value: 1, isHub: true),
+      FacilityData(facilityName: 'Port Loko Hub', value: 0.5, isHub: true),
+      FacilityData(facilityName: 'Kenema Spoke', value: 1.5, isHub: false),
+      FacilityData(facilityName: 'Bo Spoke', value: 1, isHub: false),
+      FacilityData(facilityName: 'Makeni Spoke', value: 0.8, isHub: false),
+      FacilityData(facilityName: 'Freetown Spoke', value: 0.5, isHub: false),
+      FacilityData(facilityName: 'Kono Spoke', value: 0.4, isHub: false),
+      FacilityData(facilityName: 'Port Loko Spoke', value: 0.3, isHub: false),
+    ],
+    'Q2': [
+      FacilityData(facilityName: 'Kenema Hub', value: 8, isHub: true),
+      FacilityData(facilityName: 'Bo Hub', value: 6, isHub: true),
+      FacilityData(facilityName: 'Makeni Hub', value: 5, isHub: true),
+      FacilityData(facilityName: 'Freetown Hub', value: 4, isHub: true),
+      FacilityData(facilityName: 'Kono Hub', value: 3.5, isHub: true),
+      FacilityData(facilityName: 'Port Loko Hub', value: 2.5, isHub: true),
+      FacilityData(facilityName: 'Kenema Spoke', value: 3.5, isHub: false),
+      FacilityData(facilityName: 'Bo Spoke', value: 2.5, isHub: false),
+      FacilityData(facilityName: 'Makeni Spoke', value: 2, isHub: false),
+      FacilityData(facilityName: 'Freetown Spoke', value: 1.5, isHub: false),
+      FacilityData(facilityName: 'Kono Spoke', value: 1.5, isHub: false),
+      FacilityData(facilityName: 'Port Loko Spoke', value: 1, isHub: false),
+    ],
+    'Q3': [
+      FacilityData(facilityName: 'Kenema Hub', value: 12, isHub: true),
+      FacilityData(facilityName: 'Bo Hub', value: 9, isHub: true),
+      FacilityData(facilityName: 'Makeni Hub', value: 7, isHub: true),
+      FacilityData(facilityName: 'Freetown Hub', value: 6, isHub: true),
+      FacilityData(facilityName: 'Kono Hub', value: 5, isHub: true),
+      FacilityData(facilityName: 'Port Loko Hub', value: 4, isHub: true),
+      FacilityData(facilityName: 'Kenema Spoke', value: 5, isHub: false),
+      FacilityData(facilityName: 'Bo Spoke', value: 4, isHub: false),
+      FacilityData(facilityName: 'Makeni Spoke', value: 4, isHub: false),
+      FacilityData(facilityName: 'Freetown Spoke', value: 3, isHub: false),
+      FacilityData(facilityName: 'Kono Spoke', value: 3, isHub: false),
+      FacilityData(facilityName: 'Port Loko Spoke', value: 2, isHub: false),
+    ],
+    'Q4': [
+      FacilityData(facilityName: 'Kenema Hub', value: 8, isHub: true),
+      FacilityData(facilityName: 'Bo Hub', value: 6, isHub: true),
+      FacilityData(facilityName: 'Makeni Hub', value: 4.5, isHub: true),
+      FacilityData(facilityName: 'Freetown Hub', value: 3.5, isHub: true),
+      FacilityData(facilityName: 'Kono Hub', value: 3, isHub: true),
+      FacilityData(facilityName: 'Port Loko Hub', value: 2, isHub: true),
+      FacilityData(facilityName: 'Kenema Spoke', value: 5, isHub: false),
+      FacilityData(facilityName: 'Bo Spoke', value: 4, isHub: false),
+      FacilityData(facilityName: 'Makeni Spoke', value: 3.5, isHub: false),
+      FacilityData(facilityName: 'Freetown Spoke', value: 3, isHub: false),
+      FacilityData(facilityName: 'Kono Spoke', value: 2.5, isHub: false),
+      FacilityData(facilityName: 'Port Loko Spoke', value: 2, isHub: false),
+    ],
+  };
+
   // Target Progress Data
   static const List<TargetProgressItem> targetProgress = [
     TargetProgressItem(name: 'ANC 4+ Visits', percentage: 72),

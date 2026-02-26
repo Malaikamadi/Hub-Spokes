@@ -66,6 +66,32 @@ class ChartDataPoint {
   });
 }
 
+class QuarterlyData {
+  final String quarter; // 'Q1', 'Q2', 'Q3', 'Q4'
+  final List<ChartDataPoint> monthlyData; // 3 months per quarter
+  final double hubTotal;
+  final double spokeTotal;
+
+  const QuarterlyData({
+    required this.quarter,
+    required this.monthlyData,
+    required this.hubTotal,
+    required this.spokeTotal,
+  });
+}
+
+class FacilityData {
+  final String facilityName;
+  final double value;
+  final bool isHub; // true = Hub, false = Spoke
+
+  const FacilityData({
+    required this.facilityName,
+    required this.value,
+    required this.isHub,
+  });
+}
+
 class TargetProgressItem {
   final String name;
   final double percentage;

@@ -18,6 +18,8 @@ class IndicatorDetailPage extends StatefulWidget {
 class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
   late KpiIndicator _indicator;
   late KpiCategory _category;
+  String _selectedQuarter = 'All';
+  bool _isDistribution = false; // false = Aggregate, true = Distribution
 
   @override
   void initState() {
@@ -364,10 +366,11 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header row with title + controls
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -383,7 +386,9 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Hub vs Spoke Disaggregation (2025)',
+                      _isDistribution
+                          ? 'Facility Distribution ($_selectedQuarter – 2025)'
+                          : 'Hub vs Spoke Trend ($_selectedQuarter – 2025)',
                       style: GoogleFonts.inter(
                         color: AppColors.textSecondary,
                         fontSize: 12,
@@ -392,166 +397,398 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
                   ],
                 ),
               ),
+              const SizedBox(width: 16),
+              // Aggregate / Distribution toggle
+              _buildViewToggle(),
             ],
           ),
-          const SizedBox(height: 30),
-          // Chart
-          SizedBox(
-            height: 280,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 5,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: AppColors.divider,
-                      strokeWidth: 1,
-                    );
-                  },
+          const SizedBox(height: 16),
+          // Quarter selectors
+          _buildQuarterSelector(),
+          const SizedBox(height: 24),
+          // Chart area
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            child: _isDistribution
+                ? _buildDistributionChart()
+                : _buildAggregateChart(),
+          ),
+          const SizedBox(height: 16),
+          // Legend
+          if (!_isDistribution)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildLegendItem('Hubs', AppColors.chartHub),
+                const SizedBox(width: 24),
+                _buildLegendItem('Spokes', AppColors.chartSpoke),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewToggle() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.scaffoldBg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.cardBorder),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildToggleButton('Aggregate', !_isDistribution, () {
+            setState(() => _isDistribution = false);
+          }),
+          _buildToggleButton('Distribution', _isDistribution, () {
+            setState(() => _isDistribution = true);
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToggleButton(String label, bool isActive, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive ? AppColors.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              color: isActive ? Colors.white : AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuarterSelector() {
+    final quarters = ['All', 'Q1', 'Q2', 'Q3', 'Q4'];
+    return Row(
+      children: quarters.map((q) {
+        final isSelected = _selectedQuarter == q;
+        return Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: GestureDetector(
+            onTap: () => setState(() => _selectedQuarter = q),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.cardBorder,
+                    width: isSelected ? 1.5 : 1,
+                  ),
                 ),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 5,
-                      reservedSize: 32,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          value.toInt().toString(),
-                          style: GoogleFonts.inter(
-                            color: AppColors.textMuted,
-                            fontSize: 11,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      interval: 1,
-                      getTitlesWidget: (value, meta) {
-                        final months = [
-                          'Jan','Feb','Mar','Apr','May','Jun',
-                          'Jul','Aug','Sep','Oct','Nov','Dec'
-                        ];
-                        if (value.toInt() >= 0 &&
-                            value.toInt() < months.length) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              months[value.toInt()],
-                              style: GoogleFonts.inter(
-                                color: AppColors.textMuted,
-                                fontSize: 11,
-                              ),
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                minX: 0,
-                maxX: 11,
-                minY: 0,
-                maxY: 20,
-                lineBarsData: [
-                  // Hub line
-                  LineChartBarData(
-                    spots: MockData.maternalMortalityData
-                        .asMap()
-                        .entries
-                        .map((e) =>
-                            FlSpot(e.key.toDouble(), e.value.hubValue))
-                        .toList(),
-                    isCurved: true,
-                    curveSmoothness: 0.3,
-                    color: AppColors.chartHub,
-                    barWidth: 3,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        return FlDotCirclePainter(
-                          radius: 4,
-                          color: AppColors.chartHub,
-                          strokeWidth: 2,
-                          strokeColor: Colors.white,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                  // Spoke line
-                  LineChartBarData(
-                    spots: MockData.maternalMortalityData
-                        .asMap()
-                        .entries
-                        .map((e) =>
-                            FlSpot(e.key.toDouble(), e.value.spokeValue))
-                        .toList(),
-                    isCurved: true,
-                    curveSmoothness: 0.3,
-                    color: AppColors.chartSpoke,
-                    barWidth: 3,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) {
-                        return FlDotCirclePainter(
-                          radius: 4,
-                          color: AppColors.chartSpoke,
-                          strokeWidth: 2,
-                          strokeColor: Colors.white,
-                        );
-                      },
-                    ),
-                    belowBarData: BarAreaData(show: false),
-                  ),
-                ],
-                lineTouchData: LineTouchData(
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (spot) => AppColors.sidebarBg,
-                    getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map((spot) {
-                        final isHub = spot.barIndex == 0;
-                        return LineTooltipItem(
-                          '${isHub ? "Hub" : "Spoke"}: ${spot.y.toStringAsFixed(1)}',
-                          GoogleFonts.inter(
-                            color: isHub
-                                ? AppColors.chartHub
-                                : AppColors.chartSpoke,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
-                        );
-                      }).toList();
-                    },
+                child: Text(
+                  q == 'All' ? 'All Quarters' : q,
+                  style: GoogleFonts.inter(
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.textSecondary,
+                    fontSize: 12,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          // Legend
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLegendItem('Hubs', AppColors.chartHub),
-              const SizedBox(width: 24),
-              _buildLegendItem('Spokes', AppColors.chartSpoke),
-            ],
+        );
+      }).toList(),
+    );
+  }
+
+  List<ChartDataPoint> _getFilteredData() {
+    if (_selectedQuarter == 'All') {
+      return MockData.maternalMortalityData;
+    }
+    final qIndex =
+        MockData.quarterlyData.indexWhere((q) => q.quarter == _selectedQuarter);
+    if (qIndex >= 0) {
+      return MockData.quarterlyData[qIndex].monthlyData;
+    }
+    return MockData.maternalMortalityData;
+  }
+
+  int _getMonthOffset() {
+    switch (_selectedQuarter) {
+      case 'Q2':
+        return 3;
+      case 'Q3':
+        return 6;
+      case 'Q4':
+        return 9;
+      default:
+        return 0;
+    }
+  }
+
+  Widget _buildAggregateChart() {
+    final data = _getFilteredData();
+    final offset = _getMonthOffset();
+    final maxY = data.fold<double>(0, (max, d) {
+      final v = d.hubValue > d.spokeValue ? d.hubValue : d.spokeValue;
+      return v > max ? v : max;
+    });
+    final chartMaxY = ((maxY / 5).ceil() * 5 + 5).toDouble();
+    final allMonths = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    return SizedBox(
+      key: ValueKey('aggregate_$_selectedQuarter'),
+      height: 280,
+      child: LineChart(
+        LineChartData(
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            horizontalInterval: chartMaxY / 4,
+            getDrawingHorizontalLine: (value) {
+              return FlLine(color: AppColors.divider, strokeWidth: 1);
+            },
           ),
-        ],
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: chartMaxY / 4,
+                reservedSize: 36,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt().toString(),
+                    style: GoogleFonts.inter(
+                      color: AppColors.textMuted, fontSize: 11),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: 1,
+                getTitlesWidget: (value, meta) {
+                  final idx = value.toInt() + offset;
+                  if (idx >= 0 && idx < allMonths.length &&
+                      value.toInt() >= 0 && value.toInt() < data.length) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        allMonths[idx],
+                        style: GoogleFonts.inter(
+                          color: AppColors.textMuted, fontSize: 11),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+            topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+          ),
+          borderData: FlBorderData(show: false),
+          minX: 0,
+          maxX: (data.length - 1).toDouble(),
+          minY: 0,
+          maxY: chartMaxY,
+          lineBarsData: [
+            LineChartBarData(
+              spots: data.asMap().entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value.hubValue))
+                  .toList(),
+              isCurved: true,
+              curveSmoothness: 0.3,
+              color: AppColors.chartHub,
+              barWidth: 3,
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) {
+                  return FlDotCirclePainter(
+                    radius: 4, color: AppColors.chartHub,
+                    strokeWidth: 2, strokeColor: Colors.white,
+                  );
+                },
+              ),
+              belowBarData: BarAreaData(
+                show: true,
+                color: AppColors.chartHub.withValues(alpha: 0.08),
+              ),
+            ),
+            LineChartBarData(
+              spots: data.asMap().entries
+                  .map((e) => FlSpot(e.key.toDouble(), e.value.spokeValue))
+                  .toList(),
+              isCurved: true,
+              curveSmoothness: 0.3,
+              color: AppColors.chartSpoke,
+              barWidth: 3,
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) {
+                  return FlDotCirclePainter(
+                    radius: 4, color: AppColors.chartSpoke,
+                    strokeWidth: 2, strokeColor: Colors.white,
+                  );
+                },
+              ),
+              belowBarData: BarAreaData(
+                show: true,
+                color: AppColors.chartSpoke.withValues(alpha: 0.08),
+              ),
+            ),
+          ],
+          lineTouchData: LineTouchData(
+            touchTooltipData: LineTouchTooltipData(
+              getTooltipColor: (spot) => AppColors.sidebarBg,
+              getTooltipItems: (touchedSpots) {
+                return touchedSpots.map((spot) {
+                  final isHub = spot.barIndex == 0;
+                  return LineTooltipItem(
+                    '${isHub ? "Hub" : "Spoke"}: ${spot.y.toStringAsFixed(1)}',
+                    GoogleFonts.inter(
+                      color: isHub
+                          ? AppColors.chartHub
+                          : AppColors.chartSpoke,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  );
+                }).toList();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDistributionChart() {
+    final quarter = _selectedQuarter == 'All' ? 'Q1' : _selectedQuarter;
+    final facilities = MockData.facilityDistribution[quarter] ?? [];
+    final maxVal = facilities.fold<double>(
+        0, (max, f) => f.value > max ? f.value : max);
+
+    return SizedBox(
+      key: ValueKey('distribution_$_selectedQuarter'),
+      height: 280,
+      child: BarChart(
+        BarChartData(
+          alignment: BarChartAlignment.spaceAround,
+          maxY: ((maxVal / 5).ceil() * 5 + 2).toDouble(),
+          barTouchData: BarTouchData(
+            touchTooltipData: BarTouchTooltipData(
+              getTooltipColor: (group) => AppColors.sidebarBg,
+              getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                final facility = facilities[groupIndex];
+                return BarTooltipItem(
+                  '${facility.facilityName}\n${facility.value.toStringAsFixed(1)}',
+                  GoogleFonts.inter(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                );
+              },
+            ),
+          ),
+          titlesData: FlTitlesData(
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 32,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toInt().toString(),
+                    style: GoogleFonts.inter(
+                      color: AppColors.textMuted, fontSize: 11),
+                  );
+                },
+              ),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                reservedSize: 44,
+                getTitlesWidget: (value, meta) {
+                  if (value.toInt() >= 0 && value.toInt() < facilities.length) {
+                    final name = facilities[value.toInt()].facilityName
+                        .replaceAll(' Hub', '\nHub')
+                        .replaceAll(' Spoke', '\nSpoke');
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        name,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          color: AppColors.textMuted,
+                          fontSize: 9,
+                          height: 1.2,
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+            topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            getDrawingHorizontalLine: (value) {
+              return FlLine(color: AppColors.divider, strokeWidth: 1);
+            },
+          ),
+          borderData: FlBorderData(show: false),
+          barGroups: facilities.asMap().entries.map((entry) {
+            final f = entry.value;
+            return BarChartGroupData(
+              x: entry.key,
+              barRods: [
+                BarChartRodData(
+                  toY: f.value,
+                  width: 18,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(4),
+                  ),
+                  color: f.isHub ? AppColors.chartHub : AppColors.chartSpoke,
+                ),
+              ],
+            );
+          }).toList(),
+        ),
       ),
     );
   }
