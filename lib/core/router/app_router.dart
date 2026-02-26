@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import '../../features/auth/login_page.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/dashboard/dashboard_page.dart';
+import '../../features/dashboard/indicator_detail_page.dart';
 import '../../features/framework/framework_page.dart';
 import '../../features/data_collection/data_collection_page.dart';
 
@@ -49,6 +50,17 @@ class AppRouter {
             pageBuilder: (context, state) => const NoTransitionPage(
               child: DashboardPage(),
             ),
+            routes: [
+              GoRoute(
+                path: 'indicator/:id',
+                pageBuilder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '1') ?? 1;
+                  return NoTransitionPage(
+                    child: IndicatorDetailPage(indicatorNumber: id),
+                  );
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/framework',

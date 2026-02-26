@@ -57,7 +57,7 @@ class AuthService extends ChangeNotifier {
     } on AuthException catch (e) {
       return LoginResult.failure(_mapAuthError(e.message));
     } catch (e) {
-      return LoginResult.failure('An unexpected error occurred. Please try again.');
+      return LoginResult.failure(_mapAuthError(e.toString()));
     }
   }
 
@@ -114,7 +114,22 @@ class AuthService extends ChangeNotifier {
         lower.contains('rate limit')) {
       return 'Too many attempts. Please wait a moment and try again.';
     }
-    return message;
+    if (lower.contains('404') || lower.contains('not found')) {
+      return 'Invalid email or password. Please try again.';
+    }
+    if (lower.contains('empty response') || lower.contains('status code')) {
+      return 'Invalid email or password. Please try again.';
+    }
+    if (lower.contains('network') ||
+        lower.contains('socket') ||
+        lower.contains('connection')) {
+      return 'Network error. Please check your internet connection.';
+    }
+    if (lower.contains('timeout')) {
+      return 'Connection timed out. Please try again.';
+    }
+    // Fallback: don't show raw technical errors to users
+    return 'Login failed. Please check your credentials and try again.';
   }
 }
 

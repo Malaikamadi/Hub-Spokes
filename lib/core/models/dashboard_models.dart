@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class KpiData {
   final String title;
   final String value;
@@ -11,6 +13,44 @@ class KpiData {
     required this.changeText,
     required this.isPositive,
     required this.subtitle,
+  });
+}
+
+class KpiIndicator {
+  final int number;
+  final String name;
+  final String value;
+  final String changeText;
+  final bool isPositive;
+  final String? sdgTag;
+  final String source;
+  final String targetDescription;
+  final String status; // 'On Track', 'Off Track', 'No Target'
+
+  const KpiIndicator({
+    required this.number,
+    required this.name,
+    required this.value,
+    required this.changeText,
+    required this.isPositive,
+    this.sdgTag,
+    this.source = 'DHIS2, 2025',
+    this.targetDescription = '',
+    this.status = 'On Track',
+  });
+}
+
+class KpiCategory {
+  final String level;
+  final Color color;
+  final IconData icon;
+  final List<KpiIndicator> indicators;
+
+  const KpiCategory({
+    required this.level,
+    required this.color,
+    required this.icon,
+    required this.indicators,
   });
 }
 

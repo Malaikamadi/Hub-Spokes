@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/data/mock_data.dart';
-import 'widgets/kpi_card.dart';
-import 'widgets/mortality_chart.dart';
-import 'widgets/ai_insight_card.dart';
-import 'widgets/target_progress_card.dart';
+import 'widgets/kpi_category_section.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -22,11 +20,16 @@ class DashboardPage extends StatelessWidget {
             // Page header
             _buildPageHeader(),
             const SizedBox(height: 24),
-            // KPI Cards Row
-            _buildKpiRow(),
-            const SizedBox(height: 24),
-            // Chart + Sidebar
-            _buildChartSection(),
+            // Categorized KPI Indicator Sections
+            ...MockData.kpiCategories.map((category) => Padding(
+                  padding: const EdgeInsets.only(bottom: 28),
+                  child: KpiCategorySection(
+                    category: category,
+                    onIndicatorTap: (indicator, cat) {
+                      context.go('/dashboard/indicator/${indicator.number}');
+                    },
+                  ),
+                )),
           ],
         ),
       ),
@@ -69,7 +72,8 @@ class DashboardPage extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.textPrimary,
                 side: const BorderSide(color: AppColors.cardBorder),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -84,7 +88,8 @@ class DashboardPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -92,56 +97,6 @@ class DashboardPage extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildKpiRow() {
-    final colors = [
-      AppColors.kpiRed,
-      AppColors.kpiOrange,
-      AppColors.kpiGreen,
-      AppColors.kpiBlue,
-    ];
-
-    return Row(
-      children: List.generate(MockData.kpiCards.length, (index) {
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(
-              right: index < MockData.kpiCards.length - 1 ? 16 : 0,
-            ),
-            child: KpiCard(
-              data: MockData.kpiCards[index],
-              accentColor: colors[index],
-            ),
-          ),
-        );
-      }),
-    );
-  }
-
-  Widget _buildChartSection() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Chart area (take 65%)
-        const Expanded(
-          flex: 65,
-          child: MortalityChart(),
-        ),
-        const SizedBox(width: 20),
-        // Right sidebar (take 35%)
-        Expanded(
-          flex: 35,
-          child: Column(
-            children: [
-              const AiInsightCard(),
-              const SizedBox(height: 20),
-              TargetProgressCard(items: MockData.targetProgress),
-            ],
-          ),
         ),
       ],
     );
