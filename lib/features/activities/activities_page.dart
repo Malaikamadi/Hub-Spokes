@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
+import 'widgets/add_activity_dialog.dart';
 
 class ActivityItem {
   final int id;
@@ -9,6 +10,7 @@ class ActivityItem {
   final String location;
   final String status;
   final String startDate;
+  final String description;
 
   const ActivityItem({
     required this.id,
@@ -17,10 +19,11 @@ class ActivityItem {
     required this.location,
     required this.status,
     required this.startDate,
+    this.description = '',
   });
 }
 
-const List<ActivityItem> dummyActivities = [
+List<ActivityItem> dummyActivities = [
   ActivityItem(
     id: 1,
     name: 'Training of Health Workers on Data Collection',
@@ -63,9 +66,14 @@ const List<ActivityItem> dummyActivities = [
   ),
 ];
 
-class ActivitiesPage extends StatelessWidget {
+class ActivitiesPage extends StatefulWidget {
   const ActivitiesPage({super.key});
 
+  @override
+  State<ActivitiesPage> createState() => _ActivitiesPageState();
+}
+
+class _ActivitiesPageState extends State<ActivitiesPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,7 +84,7 @@ class ActivitiesPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Page header
-            _buildPageHeader(),
+            _buildPageHeader(context),
             const SizedBox(height: 28),
             // Activities Table container
             Container(
@@ -100,25 +108,55 @@ class ActivitiesPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPageHeader() {
-    return Column(
+  Widget _buildPageHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Activities',
-          style: GoogleFonts.inter(
-            color: AppColors.textPrimary,
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Activities',
+              style: GoogleFonts.inter(
+                color: AppColors.textPrimary,
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Track and monitor project activities across Hubs and Spokes.',
+              style: GoogleFonts.inter(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          'Track and monitor project activities across Hubs and Spokes.',
-          style: GoogleFonts.inter(
-            color: AppColors.textSecondary,
-            fontSize: 14,
-            fontStyle: FontStyle.italic,
+        ElevatedButton.icon(
+          onPressed: () {
+            showDialog(
+              context: context,
+              barrierColor: Colors.black.withValues(alpha: 0.5),
+              builder: (context) => AddActivityDialog(
+                onAdded: () {
+                  setState(() {}); // Refresh the page to show the new activity
+                },
+              ),
+            );
+          },
+          icon: const Icon(Icons.add_rounded, size: 18),
+          label: const Text('Add Activity'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 0,
           ),
         ),
       ],
