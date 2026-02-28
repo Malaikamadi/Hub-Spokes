@@ -40,7 +40,7 @@ class FacilityMapWidget extends StatelessWidget {
 
     return Container(
       key: ValueKey('map_$selectedQuarter'),
-      height: 280,
+      height: 450,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.divider),
@@ -49,7 +49,7 @@ class FacilityMapWidget extends StatelessWidget {
       child: FlutterMap(
         options: MapOptions(
           initialCenter: const LatLng(8.4606, -11.7799), // Center of Sierra Leone
-          initialZoom: 6.8,
+          initialZoom: 7.2,
         ),
         children: [
           TileLayer(

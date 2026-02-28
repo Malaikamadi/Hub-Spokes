@@ -590,7 +590,7 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
 
     return SizedBox(
       key: ValueKey('aggregate_$_selectedQuarter'),
-      height: 280,
+      height: 450,
       child: LineChart(
         LineChartData(
           gridData: FlGridData(
@@ -726,7 +726,7 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
 
     return SizedBox(
       key: ValueKey('distribution_$_selectedQuarter'),
-      height: 280,
+      height: 450,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
