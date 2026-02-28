@@ -21,6 +21,7 @@ class _DashboardPageState extends State<DashboardPage> {
   bool _isLive = false; // true = data from Supabase, false = mock
 
   @override
+  
   void initState() {
     super.initState();
     _loadData();
