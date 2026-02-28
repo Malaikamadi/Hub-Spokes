@@ -2,7 +2,9 @@
 set -e
 
 echo "==> Installing Flutter SDK..."
-git clone https://github.com/flutter/flutter.git --depth 1 -b stable /tmp/flutter
+if [ ! -d "/tmp/flutter" ]; then
+  git clone https://github.com/flutter/flutter.git --depth 1 -b stable /tmp/flutter
+fi
 export PATH="/tmp/flutter/bin:/tmp/flutter/bin/cache/dart-sdk/bin:$PATH"
 
 echo "==> Running Flutter doctor..."
