@@ -1,0 +1,27 @@
+{
+    "buildCommand": "bash build_web.sh",
+    "outputDirectory": "build/web",
+    "framework": null,
+    "installCommand": "echo 'Skip install - handled in build script'",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Cross-Origin-Embedder-Policy",
+                    "value": "credentialless"
+                },
+                {
+                    "key": "Cross-Origin-Opener-Policy",
+                    "value": "same-origin"
+                }
+            ]
+        }
+    ]
+}
