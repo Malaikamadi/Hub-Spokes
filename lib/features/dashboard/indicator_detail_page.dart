@@ -367,26 +367,7 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
   }
 
   Widget _buildAnalyticsSection() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Chart area (65%)
-        Expanded(
-          flex: 65,
-          child: _buildChart(),
-        ),
-        const SizedBox(width: 20),
-        // Right sidebar (35%)
-        Expanded(
-          flex: 35,
-          child: Column(
-            children: [
-              _buildTargetProgressCard(),
-            ],
-          ),
-        ),
-      ],
-    );
+    return _buildChart();
   }
 
   Widget _buildChart() {
@@ -870,87 +851,7 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
     return _FloatingAiButton(indicatorName: _indicator.name);
   }
 
-  Widget _buildTargetProgressCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Target Progress (2025)',
-            style: GoogleFonts.inter(
-              color: AppColors.textPrimary,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 20),
-          ...MockData.targetProgress.map((item) {
-            Color barColor;
-            if (item.percentage >= 80) {
-              barColor = AppColors.success;
-            } else if (item.percentage >= 60) {
-              barColor = AppColors.primary;
-            } else {
-              barColor = AppColors.warning;
-            }
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item.name,
-                          style: GoogleFonts.inter(
-                            color: AppColors.textPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '${item.percentage.toInt()}%',
-                        style: GoogleFonts.inter(
-                          color: barColor,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: item.percentage / 100,
-                      backgroundColor: AppColors.scaffoldBg,
-                      valueColor: AlwaysStoppedAnimation<Color>(barColor),
-                      minHeight: 8,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
+
 }
 
 // ─── Floating AI Button Widget ──────────────────────────────────────
