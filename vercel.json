@@ -1,8 +1,4 @@
 {
-    "buildCommand": "bash build_web.sh",
-    "outputDirectory": "build/web",
-    "framework": null,
-    "installCommand": "echo 'Skip install - handled in build script'",
     "rewrites": [
         {
             "source": "/(.*)",
