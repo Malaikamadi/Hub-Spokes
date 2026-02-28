@@ -187,7 +187,7 @@ CREATE TABLE dhis2_facility_map (
 
 ## Recommended Implementation Order
 
-### Phase 1: Now (Web Dashboard) ✅
+### Phase 1: Now (Web Dashboard) 
 - [x] Supabase schema created
 - [x] Seed data inserted
 - [x] Dart models created

@@ -8,7 +8,7 @@ This document provides everything needed to build the mobile data collector app 
 **Supabase URL:** `https://dkcsahpirsmuyaetxhne.supabase.co`  
 **Dashboard repo:** `github.com/Malaikamadi/Hub-Spokes`
 
----
+
 
 ## Architecture
 
