@@ -7,6 +7,7 @@ import '../../core/models/dashboard_models.dart';
 import '../../core/models/database_models.dart' as db;
 import '../../core/services/data_service.dart';
 import 'widgets/kpi_category_section.dart';
+import 'widgets/dashboard_filter_panel.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -230,7 +231,17 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             // Filter button
             OutlinedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierColor: Colors.black.withValues(alpha: 0.5),
+                  builder: (context) => DashboardFilterPanel(
+                    onApply: () {
+                      // Apply filter logic here
+                    },
+                  ),
+                );
+              },
               icon: const Icon(Icons.filter_list, size: 18),
               label: const Text('Filter'),
               style: OutlinedButton.styleFrom(
