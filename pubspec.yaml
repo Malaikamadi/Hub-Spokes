@@ -40,6 +40,8 @@ dependencies:
   supabase_flutter: ^2.8.4
   pdf: ^3.11.3
   printing: ^5.14.2
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,7 @@ import '../../core/data/mock_data.dart';
 import '../../core/models/dashboard_models.dart';
 import '../../core/models/database_models.dart' as db;
 import '../../core/services/data_service.dart';
+import 'widgets/facility_map_widget.dart';
 
 class IndicatorDetailPage extends StatefulWidget {
   final int indicatorNumber;
@@ -21,7 +22,7 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
   late KpiIndicator _indicator;
   late KpiCategory _category;
   String _selectedQuarter = 'All';
-  bool _isDistribution = false;
+  String _activeView = 'Aggregate';
   bool _isLive = false;
 
   @override
@@ -426,9 +427,11 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _isDistribution
+                      _activeView == 'Distribution'
                           ? 'Facility Distribution ($_selectedQuarter – 2025)'
-                          : 'Hub vs Spoke Trend ($_selectedQuarter – 2025)',
+                          : _activeView == 'Map'
+                              ? 'Facility Heat Map ($_selectedQuarter – 2025)'
+                              : 'Hub vs Spoke Trend ($_selectedQuarter – 2025)',
                       style: GoogleFonts.inter(
                         color: AppColors.textSecondary,
                         fontSize: 12,
@@ -449,13 +452,15 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
           // Chart area
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 350),
-            child: _isDistribution
+            child: _activeView == 'Distribution'
                 ? _buildDistributionChart()
-                : _buildAggregateChart(),
+                : _activeView == 'Map'
+                    ? FacilityMapWidget(selectedQuarter: _selectedQuarter)
+                    : _buildAggregateChart(),
           ),
           const SizedBox(height: 16),
           // Legend
-          if (!_isDistribution)
+          if (_activeView != 'Distribution')
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -479,11 +484,14 @@ class _IndicatorDetailPageState extends State<IndicatorDetailPage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildToggleButton('Aggregate', !_isDistribution, () {
-            setState(() => _isDistribution = false);
+          _buildToggleButton('Aggregate', _activeView == 'Aggregate', () {
+            setState(() => _activeView = 'Aggregate');
           }),
-          _buildToggleButton('Distribution', _isDistribution, () {
-            setState(() => _isDistribution = true);
+          _buildToggleButton('Distribution', _activeView == 'Distribution', () {
+            setState(() => _activeView = 'Distribution');
+          }),
+          _buildToggleButton('Map', _activeView == 'Map', () {
+            setState(() => _activeView = 'Map');
           }),
         ],
       ),
