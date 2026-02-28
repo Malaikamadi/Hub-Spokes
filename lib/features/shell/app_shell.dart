@@ -126,6 +126,12 @@ class AppShell extends StatelessWidget {
             isActive: location.startsWith('/data-collection'),
             onTap: () => context.go('/data-collection'),
           ),
+          _SidebarItem(
+            icon: Icons.event_note_rounded,
+            label: 'Activities',
+            isActive: location.startsWith('/activities'),
+            onTap: () => context.go('/activities'),
+          ),
           const Spacer(),
           // Project Scope widget
           _buildProjectScope(),

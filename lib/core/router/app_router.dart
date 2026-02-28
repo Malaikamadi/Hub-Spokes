@@ -7,6 +7,7 @@ import '../../features/dashboard/dashboard_page.dart';
 import '../../features/dashboard/indicator_detail_page.dart';
 import '../../features/framework/framework_page.dart';
 import '../../features/data_collection/data_collection_page.dart';
+import '../../features/activities/activities_page.dart';
 
 class AppRouter {
   AppRouter._();
@@ -72,6 +73,12 @@ class AppRouter {
             path: '/data-collection',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: DataCollectionPage(),
+            ),
+          ),
+          GoRoute(
+            path: '/activities',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: ActivitiesPage(),
             ),
           ),
         ],
