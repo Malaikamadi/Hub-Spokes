@@ -38,6 +38,8 @@ dependencies:
   google_fonts: ^8.0.2
   go_router: ^17.1.0
   supabase_flutter: ^2.8.4
+  pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:

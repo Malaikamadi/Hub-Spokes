@@ -8,6 +8,7 @@ import '../../core/models/database_models.dart' as db;
 import '../../core/services/data_service.dart';
 import 'widgets/kpi_category_section.dart';
 import 'widgets/dashboard_filter_panel.dart';
+import '../../core/services/pdf_export_service.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -257,7 +258,9 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(width: 12),
             // Export Report button
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                await PdfExportService.generateAndDownloadDashboardReport(_categories);
+              },
               icon: const Icon(Icons.download_rounded, size: 18),
               label: const Text('Export Report'),
               style: ElevatedButton.styleFrom(
