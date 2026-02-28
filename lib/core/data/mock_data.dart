@@ -420,7 +420,7 @@ class MockData {
   ];
 
   // M&E Framework Data
-  static const List<FrameworkLevel> frameworkLevels = [
+  static List<FrameworkLevel> frameworkLevels = [
     FrameworkLevel(
       name: 'Impact Level',
       indicatorCount: 4,

@@ -3,10 +3,16 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/data/mock_data.dart';
 import '../../core/models/dashboard_models.dart';
+import 'widgets/add_indicator_dialog.dart';
 
-class FrameworkPage extends StatelessWidget {
+class FrameworkPage extends StatefulWidget {
   const FrameworkPage({super.key});
 
+  @override
+  State<FrameworkPage> createState() => _FrameworkPageState();
+}
+
+class _FrameworkPageState extends State<FrameworkPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,7 +23,7 @@ class FrameworkPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Page header
-            _buildPageHeader(),
+            _buildPageHeader(context),
             const SizedBox(height: 28),
             // Framework levels
             ...MockData.frameworkLevels.map(
@@ -29,25 +35,55 @@ class FrameworkPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPageHeader() {
-    return Column(
+  Widget _buildPageHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'M&E Framework',
-          style: GoogleFonts.inter(
-            color: AppColors.textPrimary,
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'M&E Framework',
+              style: GoogleFonts.inter(
+                color: AppColors.textPrimary,
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Detailed logic model for the Hubs & Spokes implementation project.',
+              style: GoogleFonts.inter(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          'Detailed logic model for the Hubs & Spokes implementation project.',
-          style: GoogleFonts.inter(
-            color: AppColors.textSecondary,
-            fontSize: 14,
-            fontStyle: FontStyle.italic,
+        ElevatedButton.icon(
+          onPressed: () {
+            showDialog(
+              context: context,
+              barrierColor: Colors.black.withValues(alpha: 0.5),
+              builder: (context) => AddIndicatorDialog(
+                onAdded: () {
+                  setState(() {}); // Refresh the page to show the new indicator
+                },
+              ),
+            );
+          },
+          icon: const Icon(Icons.add_rounded, size: 18),
+          label: const Text('Add Indicator'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 0,
           ),
         ),
       ],
